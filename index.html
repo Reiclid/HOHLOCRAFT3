@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html lang="uk" data-theme="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title data-i18n="title">GameCraft Server</title>
+    <style>
+        /* CSS-змінні для тем */
+        :root {
+            --bg-gradient-start: #ffffff;
+            --bg-gradient-end: #f0f0f0;
+            --text-primary: #222222;
+            --text-secondary: #a5a5a5;
+            --card-bg: rgba(0, 0, 0, 0.05);
+            --card-border: rgba(0, 0, 0, 0.1);
+            --accent: #00aaff;
+        }
+
+        [data-theme="dark"] {
+            --bg-gradient-start: #0f0f0f;
+            --bg-gradient-end: #1a1a1a;
+            --text-primary: #ffffff;
+            --text-secondary: #ebebeb;
+            --card-bg: rgba(255, 255, 255, 0.12);
+            --card-border: rgba(255, 255, 255, 0.18);
+            --accent: #00ff88;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            /* scroll-snap-type: y mandatory; */
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            font-size: 24px;
+            background: linear-gradient(135deg, var(--bg-gradient-start), var(--bg-gradient-end));
+            color: var(--text-primary);
+            min-height: 100vh;
+        }
+
+        a {
+            text-decoration: none;
+            color: var(--text-primary);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+
+        }
+
+        main {
+            display: grid;
+            height: 3960px;
+            grid-template-rows: 1fr 1fr 1fr;
+        }
+
+        main .container {
+            /* height: 1333px; */
+        }
+
+        .container-header {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 10px;
+        }
+
+        .container-home {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+
+        }
+
+        header {
+            background: rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(20px);
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+        }
+
+        .logo {
+            font-size: 28px;
+            font-weight: 300;
+        }
+
+        .controls {
+            display: flex;
+            gap: 10px;
+        }
+
+        .controls select,
+        .controls button {
+            background: none;
+            border: 1px solid var(--card-border);
+            color: var(--text-primary);
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        nav.nav-links {
+            display: flex;
+            gap: 25px;
+        }
+
+        nav.nav-links a {
+            position: relative;
+            padding: 8px 16px;
+            border-radius: 4px;
+            border: 1px solid var(--card-border);
+            transition: background 0.3s, color 0.3s;
+            font-weight: 500;
+        }
+
+        /* Ховер-ефект */
+        nav.nav-links a:hover {
+            background: var(--card-bg);
+        }
+
+        /* Активний пункт */
+        /* nav.nav-links a.active {
+            background: var(--accent);
+            color: var(--text-primary);
+        } */
+
+        /* За бажанням забираємо стандартну риску-сердечко (underline) */
+        nav.nav-links a::after {
+            display: none;
+        }
+
+        main {
+            padding-top: 80px;
+        }
+
+        .hero {
+            display: flex;
+            flex-direction: column;
+            text-align: center;
+            padding: 120px 0 60px 0;
+            background: radial-gradient(circle, var(--accent)22, transparent 70%);
+        }
+
+        .hero h1 {
+            font-size: 48px;
+            margin-bottom: 15px;
+        }
+
+        .hero p {
+            font-size: 18px;
+            color: var(--text-secondary);
+        }
+
+        .hero h1,
+        .hero p {
+            /* display: inline-block; */
+            padding: 0.2em 0.4em;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+            backdrop-filter: blur(5px);
+        }
+
+        .download-section,
+        .contacts-section,
+        .info-card,
+        .server-status {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            padding: 30px;
+            margin: 230px 0 30px 0;
+            max-height: fit-content;
+            backdrop-filter: blur(20px);
+            transition: transform .3s, box-shadow .3s;
+        }
+
+        .download-section:hover,
+        .contacts-section:hover,
+        .info-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .download-btn,
+        .contacts-btn {
+            margin: 15px 0;
+            padding: 12px 30px;
+            border-radius: 8px;
+            border: 1px solid var(--card-border);
+            text-decoration: none;
+            font-weight: 500;
+            transition: background .3s;
+        }
+
+        .download-btn:hover,
+        .contacts-btn:hover {
+            background: var(--accent)22;
+        }
+
+        .contacts-section {
+            height: 100%;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .server-status {
+            text-align: center;
+        }
+
+        .status-online {
+            color: var(--accent);
+            font-weight: bold;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: .5;
+            }
+        }
+
+        footer {
+            /* background: rgba(0, 0, 0, 0.1); */
+            text-align: center;
+            padding: 20px 0;
+            margin-top: -90px !important;
+            color: var(--text-secondary);
+        }
+
+        .background {
+            position: absolute;
+            width: 100%;
+            overflow: hidden;
+            height: 3960px;
+            z-index: -1;
+        }
+
+        .background-img {
+            width: 100%;
+            /* растягиваем по ширине контейнера */
+            height: 100%;
+            /* растягиваем по высоте контейнера */
+            object-fit: cover;
+            /* сохраняем соотношение сторон, обрезая лишнее */
+            object-position: center;
+            /* центруем изображение внутри контейнера */
+
+        }
+
+        .custom-select {
+            position: relative;
+            width: 60px;
+            font-size: 16px;
+            user-select: none;
+        }
+
+        .cs__trigger {
+            display: flex;
+            justify-content: center;
+            padding: 5px 10px;
+            background: var(--card-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--card-border);
+            border-radius: 5px;
+            cursor: pointer;
+            color: var(--text-primary);
+        }
+
+        .cs__options {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            margin: 5px 0 0;
+            padding: 0;
+            list-style: none;
+            background: var(--card-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--card-border);
+            border-radius: 5px;
+            max-height: 200px;
+            overflow-y: auto;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity .2s;
+            z-index: 10;
+        }
+
+        .cs__options.open {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .cs__options li {
+            padding: 5px 10px;
+            cursor: pointer;
+            color: var(--text-primary);
+        }
+
+        .cs__options li:hover {
+            background: var(--card-border);
+        }
+
+
+        .section-indicator {
+            position: fixed;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 1001;
+        }
+
+        .section-indicator ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .section-indicator li {
+            width: 12px;
+            height: 12px;
+            margin: 10px 0;
+            border-radius: 50%;
+            background: var(--card-bg);
+            cursor: pointer;
+            transition: background 0.3s, transform 0.3s;
+        }
+
+        .section-indicator li.active {
+            background: var(--accent);
+            transform: scale(1.4);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="background">
+        <img class="background-img" src="back.png" alt="Background">
+    </div>
+
+    <header>
+        <section class="container container-header">
+            <div class="logo" data-i18n="logo">HohloCraft III</div>
+            <nav class="nav-links">
+                <a href="#" id="copy-api">hohlicraft.API</a>
+                <!-- <a href="#home" data-i18n="nav.home">Головна</a>
+                <a href="#about" data-i18n="nav.about">Про сервер</a>
+                <a href="#contacts" data-i18n="nav.contacts">Контакти</a> -->
+            </nav>
+            <div class="controls">
+                <div class="custom-select">
+                    <div class="cs__trigger">Укр</div>
+                    <ul class="cs__options">
+                        <li data-value="uk">Укр</li>
+                        <li data-value="en">Eng</li>
+                        <li data-value="ru">Рус</li>
+                        <li data-value="pl">Pol</li>
+                        <li data-value="cs">Čes</li>
+                    </ul>
+                </div>
+                <!-- прихований <select> -->
+                <select id="lang-select" name="lang" style="display:none;">
+                    <option value="uk">Укр</option>
+                    <option value="en">Eng</option>
+                    <option value="ru">Рус</option>
+                    <option value="pl">Pol</option>
+                    <option value="cs">Čes</option>
+                </select>
+            </div>
+        </section>
+    </header>
+
+    <div class="section-indicator">
+        <ul>
+            <li data-target="home"></li>
+            <li data-target="about"></li>
+            <li data-target="contacts"></li>
+        </ul>
+    </div>
+
+    <main class="container">
+        <!-- Home -->
+        <section id="home" class="container-home">
+            <section class="hero">
+                <h1 data-i18n="hero.title">Ласкаво просимо на HohloCraft III!</h1>
+                <p data-i18n="hero.subtitle">Найкращий Minecraft сервер з унікальними модами та дружньою спільнотою</p>
+            </section>
+            <section id="download" class="download-section">
+                <h2 data-i18n="download.title">Скачати Мод Пак</h2>
+                <p data-i18n="download.desc">Завантажте наш офіційний мод пак для повноцінної гри на сервері</p>
+                <a href="#" class="download-btn" onclick="downloadModpack()" data-i18n="download.button">📦 Скачати
+                    (v2.1)</a>
+                <p style="margin-top:15px;color:var(--text-secondary);" data-i18n="download.info">
+                    Розмір: ~150 МБ | Версія Minecraft: 1.21.6
+                </p>
+            </section>
+        </section>
+
+        <!-- About -->
+        <section id="about" class="info-grid">
+            <div class="info-card">
+                <h3 data-i18n="about.server">Про Сервер</h3>
+                <p data-i18n="about.serverTxt">HohloCraft III – це унікальний Minecraft сервер з власними модами,
+                    цікавими механіками та активною спільнотою.</p>
+            </div>
+            <div class="info-card">
+                <h3 data-i18n="about.rules">Правила</h3>
+                <p data-i18n="about.rulesTxt">Поважайте інших, не використовуйте чити, не грифте. Повні правила в нашому
+                    Discord.</p>
+            </div>
+            <div class="info-card">
+                <h3 data-i18n="about.howto">Як Почати</h3>
+                <p data-i18n="about.howtoTxt">
+                    <!-- текст підтягується з JS-словника перекладів -->
+                </p>
+            </div>
+        </section>
+
+        <!-- Contacts -->
+        <section id="contacts">
+            <div class="contacts-section">
+                <h2 data-i18n="contacts.title">Контакти</h2>
+                <div style="display:flex;gap:20px;justify-content:center;">
+                    <a href="https://discord.gg/PpNJscr3" class="contacts-btn" data-i18n="contacts.discord">Discord
+                        Сервер</a>
+                    <a href="#" class="contacts-btn" data-i18n="contacts.telegram">Telegram Канал</a>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="container">
+        <p data-i18n="footer.copy">© 2025 HohloCraft III Server. Всі права захищені.</p>
+        <p data-i18n="footer.made">Зроблено з ❤️ для спільноти</p>
+    </footer>
+
+    <script>
+        const apiLink = document.getElementById('copy-api');
+        apiLink.addEventListener('click', e => {
+            e.preventDefault();                           // не переходимо за href
+            const text = apiLink.textContent.trim();      // текст для копіювання
+            navigator.clipboard.writeText(text)           // записуємо в буфер обміну
+                .then(() => {
+                    // необов’язково — показати користувачу підтвердження
+                    // apiLink.textContent = 'Скопійовано! ✅';
+                    setTimeout(() => apiLink.textContent = text, 1500);
+                })
+                .catch(err => {
+                    console.error('Не вдалося скопіювати текст:', err);
+                });
+        });
+        /*==============================
+          1) Cookie-утиліти
+        ==============================*/
+        function setCookie(name, value, days) {
+            const expires = new Date(Date.now() + 864e5 * days).toUTCString();
+            document.cookie = `${name}=${encodeURIComponent(value)}; expires=${expires}; path=/`;
+        }
+        function getCookie(name) {
+            return document.cookie.split('; ').reduce((r, c) => {
+                const [k, v] = c.split('=');
+                return k === name ? decodeURIComponent(v) : r;
+            }, '');
+        }
+
+        /*==============================
+          2) Переклади
+        ==============================*/
+        const translations = {
+            uk: {
+                title: "HohloCraft III Server", logo: "HohloCraft III",
+                "nav.home": "Головна", "nav.about": "Про сервер", "nav.download": "Скачати", "nav.contacts": "Контакти",
+                "hero.title": "Ласкаво просимо на HohloCraft III!",
+                "hero.subtitle": "Найкращий Minecraft сервер з унікальними модами та дружньою спільнотою",
+                "download.title": "Скачати Мод Пак",
+                "download.desc": "Завантажте наш офіційний мод пак для повноцінної гри на сервері",
+                "download.button": "📦 Скачати (v2.1)",
+                "download.info": "Розмір: ~150 МБ | Версія Minecraft: 1.21.6",
+                "about.server": "Про Сервер",
+                "about.serverTxt": "HohloCraft III – це унікальний Minecraft сервер з власними модами, цікавими механіками та активною спільнотою.",
+                "about.rules": "Правила",
+                "about.rulesTxt": "Поважайте інших, не використовуйте чити, не грифте. Повні правила в нашому Discord.",
+                "about.howto": "Як Почати",
+                "about.howtoTxt": `
+               1. Завантажте архів «modpack.zip».<br>
+                2. Розпакуйте його в папку <code>.minecraft</code> (Windows: %appdata%\\.minecraft).<br>
+                3. Відкрийте лаунчер Minecraft.<br>
+                4. Створіть або оберіть профіль із версією <strong>1.21.6 Fabric</strong>.<br>
+                5. Перезапустіть лаунчер, щоб підвантажилися моди.<br>
+                6. Підключіться до сервера HohloCraft і насолоджуйтесь грою!
+        `,
+                "contacts.title": "Контакти",
+                "contacts.discord": "Discord Сервер",
+                "contacts.telegram": "Telegram Канал",
+                "footer.copy": "© 2025 HohloCraft III Server. Всі права захищені.",
+                "footer.made": "Зроблено з ❤️ для спільноти"
+            },
+            en: {
+                title: "HohloCraft III Server", logo: "HohloCraft III",
+                "nav.home": "Home", "nav.about": "About", "nav.download": "Download", "nav.contacts": "Contacts",
+                "hero.title": "Welcome to HohloCraft III!",
+                "hero.subtitle": "The best Minecraft server with unique mods and a friendly community",
+                "download.title": "Download Mod Pack",
+                "download.desc": "Get our official mod pack for full server experience",
+                "download.button": "📦 Download (v2.1)",
+                "download.info": "Size: ~150 MB | Minecraft version: 1.21.6",
+                "about.server": "About Server",
+                "about.serverTxt": "HohloCraft III is a unique Minecraft server with custom mods, fun mechanics, and an active community.",
+                "about.rules": "Rules",
+                "about.rulesTxt": "Respect others, no cheats, no griefing. Full rules on our Discord.",
+                "about.howto": "How to Start",
+                "about.howtoTxt": `
+                    1. Download the <code>modpack.zip</code> archive.<br>
+                    2. Extract it into your <code>.minecraft</code> folder (e.g. %appdata%\\.minecraft on Windows).<br>
+                    3. Open the Minecraft launcher.<br>
+                    4. Create or select a profile using Minecraft version <strong>1.21.6 Fabric</strong>.<br>
+                    5. Restart the launcher to load the mods.<br>
+                    6. Connect to the HohloCraft server and enjoy!
+        `,
+                "contacts.title": "Contacts",
+                "contacts.discord": "Discord Server",
+                "contacts.telegram": "Telegram Channel",
+                "footer.copy": "© 2025 HohloCraft III Server. All rights reserved.",
+                "footer.made": "Made with ❤️ for the community"
+            },
+            ru: {
+                title: "Сервер HohloCraft III", logo: "HohloCraft III",
+                "nav.home": "Главная", "nav.about": "О сервере", "nav.download": "Скачать", "nav.contacts": "Контакты",
+                "hero.title": "Добро пожаловать на HohloCraft III!",
+                "hero.subtitle": "Лучший Minecraft сервер с уникальными модами и дружным сообществом",
+                "download.title": "Скачать Мод Пак",
+                "download.desc": "Скачайте наш официальный мод пак для полноценной игры на сервере",
+                "download.button": "📦 Скачать (v2.1)",
+                "download.info": "Размер: ~150 МБ | Версия Minecraft: 1.21.6",
+                "about.server": "О Сервере",
+                "about.serverTxt": "HohloCraft III – уникальный Minecraft сервер с собственными модами, интересными механиками и активным сообществом.",
+                "about.rules": "Правила",
+                "about.rulesTxt": "Уважайте других, не используйте читы, не грифи. Полные правила в нашем Discord.",
+                "about.howto": "Как Начать",
+                "about.howtoTxt": `
+                    1. Скачайте архив «modpack.zip».<br>
+                    2. Распакуйте его в папку <code>.minecraft</code> (Windows: %appdata%\\.minecraft).<br>
+                    3. Откройте лаунчер Minecraft.<br>
+                    4. Создайте или выберите профиль с версией <strong>1.21.6 Fabric</strong>.<br>
+                    5. Перезапустите лаунчер для загрузки модов.<br>
+                    6. Подключитесь к серверу HohloCraft и наслаждайтесь!
+        `,
+                "contacts.title": "Контакты",
+                "contacts.discord": "Discord Сервер",
+                "contacts.telegram": "Канал Telegram",
+                "footer.copy": "© 2025 HohloCraft III Server. Все права защищены.",
+                "footer.made": "Сделано с ❤️ для сообщества"
+            },
+            pl: {
+                title: "Serwer HohloCraft III", logo: "HohloCraft III",
+                "nav.home": "Start", "nav.about": "O serwerze", "nav.download": "Pobierz", "nav.contacts": "Kontakt",
+                "hero.title": "Witamy na HohloCraft III!",
+                "hero.subtitle": "Najlepszy serwer Minecraft z unikalnymi modami i przyjazną społecznością",
+                "download.title": "Pobierz Mod Pack",
+                "download.desc": "Pobierz nasz oficjalny mod pack, aby w pełni cieszyć się serwerem",
+                "download.button": "📦 Pobierz (v2.1)",
+                "download.info": "Rozmiar: ~150 MB | Wersja Minecraft: 1.21.6",
+                "about.server": "O Serwerze",
+                "about.serverTxt": "HohloCraft III to unikalny serwer Minecraft z własnymi modami, ciekawymi mechanikami i aktywną społecznością.",
+                "about.rules": "Zasady",
+                "about.rulesTxt": "Szanuj innych, nie używaj cheatów, nie griefuj. Pełne zasady na naszym Discordzie.",
+                "about.howto": "Jak Zacząć",
+                "about.howtoTxt": `
+                1. Pobierz archiwum «modpack.zip».<br>
+                2. Wypakuj je do folderu <code>.minecraft</code> (np. %appdata%\\.minecraft na Windows).<br>
+                3. Uruchom launcher Minecraft.<br>
+                4. Utwórz lub wybierz profil z wersją <strong>1.21.6 Fabric</strong>.<br>
+                5. Zrestartuj launcher, aby załadować mody.<br>
+                6. Połącz się z serwerem HohloCraft i miłej gry!
+        `,
+                "contacts.title": "Kontakt",
+                "contacts.discord": "Server Discord",
+                "contacts.telegram": "Kanał Telegram",
+                "footer.copy": "© 2025 HohloCraft III Server. Wszelkie prawa zastrzeżone.",
+                "footer.made": "Stworzone z ❤️ dla społeczności"
+            },
+            cs: {
+                title: "Server HohloCraft III", logo: "HohloCraft III",
+                "nav.home": "Domů", "nav.about": "O serveru", "nav.download": "Stáhnout", "nav.contacts": "Kontakty",
+                "hero.title": "Vítejte na HohloCraft III!",
+                "hero.subtitle": "Nejlepší Minecraft server s unikátními mody a přátelskou komunitou",
+                "download.title": "Stáhnout Mod Pack",
+                "download.desc": "Stáhněte si náš oficiální mod pack pro plnohodnotnou hru na serveru",
+                "download.button": "📦 Stáhnout (v2.1)",
+                "download.info": "Velikost: ~150 MB | Verze Minecraft: 1.21.6",
+                "about.server": "O Serveru",
+                "about.serverTxt": "HohloCraft III je unikátní Minecraft server s vlastními mody, zajímavými mechanikami a aktivní komunitou.",
+                "about.rules": "Pravidla",
+                "about.rulesTxt": "Respektujte ostatní, nepoužívejte cheaty, negriefujte. Plná pravidla na našem Discordu.",
+                "about.howto": "Jak Začít",
+                "about.howtoTxt": `
+                1. Stáhněte archív «modpack.zip».<br>
+                2. Rozbalte ho do složky <code>.minecraft</code> (např. %appdata%\\.minecraft ve Windows).<br>
+                3. Otevřete Minecraft launcher.<br>
+                4. Vytvořte nebo vyberte profil s verzí <strong>1.21.6 Fabric</strong>.<br>
+                5. Restartujte launcher pro načtení modů.<br>
+                6. Připojte se na server HohloCraft a užijte si hru!
+        `,
+                "contacts.title": "Kontakty",
+                "contacts.discord": "Server Discord",
+                "contacts.telegram": "Telegram Kanál",
+                "footer.copy": "© 2025 HohloCraft III Server. Všechna práva vyhrazena.",
+                "footer.made": "Vytvořeno s ❤️ pro komunitu"
+            }
+        };
+
+        function applyLanguage(lang) {
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                if (translations[lang] && translations[lang][key]) {
+                    el.innerHTML = translations[lang][key];
+                }
+            });
+        }
+
+        /*==============================
+          3) Language selector
+        ==============================*/
+        (function () {
+            const trigger = document.querySelector('.cs__trigger');
+            const dropdown = document.querySelector('.cs__options');
+            const nativeSelect = document.getElementById('lang-select');
+            const saved = getCookie('lang') || 'en';
+            applyLanguage(saved);
+            trigger.textContent = { uk: 'Укр', en: 'Eng', ru: 'Рус', pl: 'Pol', cs: 'Čes' }[saved];
+            nativeSelect.value = saved;
+
+            trigger.addEventListener('click', () => dropdown.classList.toggle('open'));
+            dropdown.querySelectorAll('li').forEach(li => {
+                li.addEventListener('click', () => {
+                    const v = li.dataset.value;
+                    setCookie('lang', v, 365);
+                    applyLanguage(v);
+                    trigger.textContent = li.textContent;
+                    nativeSelect.value = v;
+                    dropdown.classList.remove('open');
+                });
+            });
+            document.addEventListener('click', e => {
+                if (!e.target.closest('.custom-select')) dropdown.classList.remove('open');
+            });
+        })();
+
+        /*==============================
+          4) Nav + Indicator via IntersectionObserver
+        ==============================*/
+        (function () {
+            const secs = document.querySelectorAll('main.container > section[id]');
+            const links = document.querySelectorAll('nav.nav-links a');
+            const dots = document.querySelectorAll('.section-indicator li');
+            const obs = new IntersectionObserver(entries => {
+                entries.forEach(ent => {
+                    if (!ent.isIntersecting) return;
+                    const id = ent.target.id;
+                    // меню
+                    links.forEach(a => a.classList.remove('active'));
+                    const a = document.querySelector(`nav.nav-links a[href="#${id}"]`);
+                    a && a.classList.add('active');
+                    // індикатор
+                    dots.forEach(d => d.classList.remove('active'));
+                    const d = document.querySelector(`.section-indicator li[data-target="${id}"]`);
+                    d && d.classList.add('active');
+                });
+            }, { rootMargin: '-40% 0px -59% 0px' });
+            secs.forEach(s => obs.observe(s));
+            // клік по точки
+            dots.forEach(d => {
+                d.addEventListener('click', () => {
+                    const tgt = document.getElementById(d.dataset.target);
+                    tgt && tgt.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                });
+            });
+        })();
+
+        /*==============================
+          5) JS Scroll-Snap
+        ==============================*/
+        (function () {
+            const DELAY = 100, sections = document.querySelectorAll('main.container > section[id]');
+            let enabled = true, timer = null;
+            window.addEventListener('scroll', () => {
+                if (!enabled) return;
+                clearTimeout(timer);
+                timer = setTimeout(() => {
+                    enabled = false;
+                    const centerY = window.scrollY + window.innerHeight / 2;
+                    let minD = Infinity, best = null;
+                    sections.forEach(s => {
+                        const r = s.getBoundingClientRect();
+                        const mid = window.scrollY + r.top + r.height / 2;
+                        const d = Math.abs(mid - centerY);
+                        if (d < minD) { minD = d; best = s; }
+                    });
+                    if (best) best.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    setTimeout(() => enabled = true, 600);
+                }, DELAY);
+            }, { passive: true });
+        })();
+
+        /*==============================
+          6) Download Modpack
+        ==============================*/
+        function downloadModpack() {
+            alert('Скачування мод паку розпочнеться незабаром!\nПереконайтесь, що у вас встановлений Minecraft 1.21.6');
+            window.location.href = '/mods.zip';
+        }
+    </script>
+</body>
+
+</html>
